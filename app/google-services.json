@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "943187219708",
+    "firebase_url": "https://qiwi-abg.firebaseio.com",
+    "project_id": "qiwi-abg",
+    "storage_bucket": "qiwi-abg.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943187219708:android:93477e2b1d47206e",
+        "android_client_info": {
+          "package_name": "com.example.brianchan.qiwi_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "943187219708-ao2r8hun51rbvnhjj2lisgbs5p4f4lig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCx-BYiC7GmbCCjNgSXUkcUQeVS-CoAsH4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
