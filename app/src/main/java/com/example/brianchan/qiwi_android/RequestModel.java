@@ -10,17 +10,18 @@ import com.google.firebase.database.ValueEventListener;
  * Created by Brian Chan on 2/5/2017.
  */
 
-public class RequestModel {
+class RequestModel {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference roomRef = database.getReference("Rooms");
-    private String roomid;
-    private String request = "RequestList";
-    private String play = "Playlist";
-    private String hist = "History";
+    private String roomid = "room1"; //TODO: CHANGE, CONST FOR TESTING
+    private static final String
+            request = "RequestList",
+            play = "Playlist",
+            hist = "History";
     private String playSongs, requestSongs, histSongs;
 
     //Assigns the roomid
-    public RequestModel(String roomid) {
+    RequestModel(String roomid) {
         this.roomid = roomid;
 
         roomRef = roomRef.child(roomid);
@@ -65,8 +66,12 @@ public class RequestModel {
         roomRef.child(hist).child("songs").addValueEventListener(histListener);
     }
 
+    Request getCurrentRequest() {
+        return new Request(peek(request), this);
+    }
+
     //Plays the song, returns the song to be played or "" if the playlist is empty
-    public String playSong() {
+    String playSong() {
         String song = pop(play);
 
         if (song.equals("")) {
@@ -79,12 +84,12 @@ public class RequestModel {
     }
 
     //Add asong to the end of the request list
-    public boolean addRequest(String song) {
+    boolean addRequest(String song) {
         return push(request, song);
     }
 
     //Approves a song request and pushes it onto the playlist
-    public boolean approveRequest() {
+    boolean approveRequest() {
         String song = pop(request);
 
         return !song.equals("") && push(play, song);
@@ -92,14 +97,10 @@ public class RequestModel {
     }
 
     //Rejects a song request by removing it from the request list
-    public boolean rejectRequest() {
+    boolean rejectRequest() {
         pop(request);
 
         return true;
-    }
-
-    public Request getCurrentRequest() {
-        return new Request(peek("requestList"));
     }
 
     //Removes and returns the first song in the song string. Returns "" if empty
@@ -117,6 +118,21 @@ public class RequestModel {
 
             song = song + songs.charAt(0);
             songs = songs.substring(1);
+        }
+
+        return song;
+    }
+
+    private String peek(String origin) {
+        String songs = fetchSong(origin);
+        String song = "";
+
+        while (songs.length() > 0) {
+            if (songs.charAt(0) == '/') {
+                break;
+            }
+
+            song = song + songs.charAt(0);
         }
 
         return song;
@@ -141,14 +157,13 @@ public class RequestModel {
     }
 
     private String fetchSong(String origin) {
-        if (origin.equals(request)) {
-            return requestSongs;
-        }
-        else if (origin.equals(play)){
-            return playSongs;
-        }
-        else if (origin.equals(hist)) {
-            return histSongs;
+        switch (origin) {
+            case request:
+                return requestSongs;
+            case play:
+                return playSongs;
+            case hist:
+                return histSongs;
         }
 
         return "";
@@ -157,16 +172,30 @@ public class RequestModel {
 
 class Request {
     String songid;
+    private RequestModel model;
 
-    Request(String songid) {
+    Request(String songid, RequestModel model) {
         this.songid = songid;
+        this.model = model;
     }
 
+    //Adds the first song from the request list to the playlist
     void addToQueue() {
-        approveRequest();
+        model.approveRequest();
     }
 
+    //Deletes the first song from the request list
     void delete() {
-        rejectRequest();
+        model.rejectRequest();
+    }
+
+    //Plays the first song in the playlist
+    void playSong() {
+        model.playSong();
+    }
+
+    //Add a request to the request list
+    void addRequest() {
+        model.addRequest(songid);
     }
 }

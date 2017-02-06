@@ -14,6 +14,7 @@ public class RequestPresenter {
     public RequestPresenter(RequestActivity activity) {
         this.activity = activity;
         //instantiate model
+        model = new RequestModel("room1");
 
         inflateRequest(model.getCurrentRequest());
     }
@@ -32,10 +33,10 @@ public class RequestPresenter {
 
     public void rejectRequest() {
         model.getCurrentRequest().delete();
-
+        inflateRequest(model.getCurrentRequest());
     }
 
     public void inflateRequest(Request request) {
-        activity.songNameText.setText(request.songTitle);
+        activity.songNameText.setText(request.songid);
     }
 }
