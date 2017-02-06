@@ -9,9 +9,13 @@ import android.content.Intent;
 
 public class RequestPresenter {
     RequestActivity activity;
+    RequestModel model;
 
     public RequestPresenter(RequestActivity activity) {
         this.activity = activity;
+        //instantiate model
+
+        inflateRequest(model.getCurrentRequest());
     }
 
 
@@ -21,11 +25,17 @@ public class RequestPresenter {
     }
 
     public void acceptRequest() {
-
+        model.getCurrentRequest().addToQueue();
+        inflateRequest(model.getCurrentRequest());
     }
 
 
     public void rejectRequest() {
+        model.getCurrentRequest().delete();
 
+    }
+
+    public void inflateRequest(Request request) {
+        activity.songNameText.setText(request.songTitle);
     }
 }
