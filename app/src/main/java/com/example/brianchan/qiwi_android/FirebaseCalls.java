@@ -36,7 +36,7 @@ public class FirebaseCalls {
 
             }
         };
-        roomRef.child(play).addValueEventListener(playListener);
+        roomRef.child(play).child("songs").addValueEventListener(playListener);
 
         ValueEventListener requestListener = new ValueEventListener() {
             @Override
@@ -49,7 +49,7 @@ public class FirebaseCalls {
 
             }
         };
-        roomRef.child(request).addValueEventListener(requestListener);
+        roomRef.child(request).child("songs").addValueEventListener(requestListener);
 
         ValueEventListener histListener = new ValueEventListener() {
             @Override
@@ -62,7 +62,7 @@ public class FirebaseCalls {
 
             }
         };
-        roomRef.child(hist).addValueEventListener(histListener);
+        roomRef.child(hist).child("songs").addValueEventListener(histListener);
     }
 
     //Plays the song, returns the song to be played or "" if the playlist is empty
