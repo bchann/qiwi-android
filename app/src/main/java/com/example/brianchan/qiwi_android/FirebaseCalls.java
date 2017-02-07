@@ -6,6 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 /**
  * Created by Brian Chan on 2/5/2017.
  */
@@ -29,6 +31,8 @@ public class FirebaseCalls {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 playSongs = dataSnapshot.getValue(String.class);
+
+                System.err.println(playSongs);
             }
 
             @Override
@@ -63,6 +67,25 @@ public class FirebaseCalls {
             }
         };
         roomRef.child(hist).child("songs").addValueEventListener(histListener);
+    }
+
+    public ArrayList<String> fetchSongList(String origin) {
+        String songs = fetchSong(origin);
+        String song = "";
+        ArrayList<String> songsArr = new ArrayList<>();
+
+        while (!songs.equals("")) {
+            if (songs.charAt(0) == '/') {
+                songs = songs.substring(1);
+                songsArr.add(song);
+                song = "";
+            }
+
+            song = song + songs.charAt(0);
+            songs = songs.substring(1);
+        }
+
+        return songsArr;
     }
 
     //Plays the song, returns the song to be played or "" if the playlist is empty
