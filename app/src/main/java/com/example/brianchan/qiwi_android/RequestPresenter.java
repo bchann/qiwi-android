@@ -2,6 +2,7 @@ package com.example.brianchan.qiwi_android;
 
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.os.Handler;
 
 /**
  * Created by rishi on 2/5/17.
@@ -10,13 +11,20 @@ import android.content.Intent;
 public class RequestPresenter {
     RequestActivity activity;
     RequestModel model;
+    public Handler mHandler = new Handler();
 
     public RequestPresenter(RequestActivity activity) {
         this.activity = activity;
         //instantiate model
         model = new RequestModel("room1");
+        //inflateRequest(model.getCurrentRequest());
 
-        inflateRequest(model.getCurrentRequest());
+        //Pause for 5 sec before running code
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                inflateRequest(model.getCurrentRequest());
+            }
+        }, 5000);
     }
 
 
