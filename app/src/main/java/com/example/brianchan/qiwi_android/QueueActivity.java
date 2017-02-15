@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.player.Player;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +23,8 @@ public class QueueActivity extends AppCompatActivity {
     Button requestsBtn;
     Button togglePlayBtn;
     ListView playlist;
+
+    //public Player songPLayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +37,13 @@ public class QueueActivity extends AppCompatActivity {
         requestsBtn = (Button) findViewById(R.id.requestsBtn);
         togglePlayBtn = (Button) findViewById(R.id.togglePlayBtn);
         playlist = (ListView) findViewById(R.id.playlist);
+
+        togglePlayBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.togglePlayPause();
+            }
+        });
     }
 
     // onclick method for requestsBtn
@@ -37,8 +51,6 @@ public class QueueActivity extends AppCompatActivity {
         presenter.switchTabs();
     }
 
-    // onclick method for rejectBtn
-    public void togglePlayPause(View v) {
-        presenter.togglePlayPause();
-    }
+    // onclick method for togglePlayBtn
+    public void togglePlayPause(View v) {presenter.togglePlayPause(); }
 }

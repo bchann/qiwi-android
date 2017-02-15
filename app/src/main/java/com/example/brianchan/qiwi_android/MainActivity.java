@@ -25,13 +25,13 @@ public class MainActivity extends Activity implements
 {
 
     // TODO: Replace with your client ID
-    private static final String CLIENT_ID = "7bccf322d5644ad4905b43e7d0f61f7f";
+    public static final String CLIENT_ID = "7bccf322d5644ad4905b43e7d0f61f7f";
     // TODO: Replace with your redirect URI
-    private static final String REDIRECT_URI = "abg110://callback";
+    public static final String REDIRECT_URI = "abg110://callback";
 
-    private Player mPlayer;
+    public Player mPlayer;
 
-    private static final int REQUEST_CODE = 1337;
+    public static final int REQUEST_CODE = 1337;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,8 @@ public class MainActivity extends Activity implements
 
     @Override
     protected void onDestroy() {
+        //Avoids leaking resources
+        Spotify.destroyPlayer(this);
         super.onDestroy();
     }
 
