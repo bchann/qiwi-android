@@ -1,5 +1,7 @@
 package com.example.brianchan.qiwi_android;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -48,9 +50,22 @@ public class QueueActivity extends AppCompatActivity {
 
     // onclick method for requestsBtn
     public void switchTabs(View v) {
-        presenter.switchTabs();
+        //presenter.switchTabs();
     }
 
     // onclick method for togglePlayBtn
-    public void togglePlayPause(View v) {presenter.togglePlayPause(); }
+    public void togglePlayPause(View v) {
+        //presenter.togglePlayPause();
+    }
+
+    public void fbcall (View v) {
+        FirebaseCalls fb = new FirebaseCalls();
+    }
+
+    public void mess (View v) {
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("sms:"));
+        sendIntent.putExtra("sms_body", "Your unique passcode is " + 1234);
+        startActivity(sendIntent);
+    }
 }

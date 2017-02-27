@@ -22,7 +22,7 @@ public class QueuePresenter {
     QueueActivity activity;
     MainActivity main;
     private String roomid = "room1";
-    private FirebaseCalls queueCalls = new FirebaseCalls(roomid);
+    //private FirebaseCalls queueCalls = new FirebaseCalls(roomid);
     private boolean isPaused = false;
     Player.OperationCallback op = new Player.OperationCallback() {
         @Override
@@ -58,10 +58,10 @@ public class QueuePresenter {
             }
         }
         else{
-            ArrayList<String> playList = queueCalls.fetchSongList("Playlist");
+            /*ArrayList<String> playList = queueCalls.fetchSongList("Playlist");
             player.playUri(op, playList.get(0),0, 0);
             isPaused = false;
-            queueCalls.playSong();
+            queueCalls.playSong();*/
         }
 
     }

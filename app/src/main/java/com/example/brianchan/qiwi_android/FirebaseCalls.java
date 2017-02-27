@@ -6,7 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Brian Chan on 2/5/2017.
@@ -14,162 +14,108 @@ import java.util.ArrayList;
 
 public class FirebaseCalls {
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference roomRef = database.getReference("Rooms");
-    private String roomid;
-    private String request = "RequestList";
-    private String play = "Playlist";
-    private String hist = "History";
-    private String playSongs, requestSongs, histSongs;
+    private DatabaseReference partyRef = database.getReference("parties");
+    private int roomid;
+    private String history_id, request_list_id, playlist_id;
+    private String dj_list_id;
+    private int passcode = 1234;
+    private boolean requests_paused = false;
+    private String spotifyAuth = "tempspotifyauthkey";
+    private static final int passcodeLength = 4;
+    private List<Song> history_list, request_list, playlist;
 
-    //Assigns the roomid
-    public FirebaseCalls(String roomid) {
-        this.roomid = roomid;
+    /**
+     * Creates a new party in Firebase and links it with songlists, userlists, and users.
+     */
+    public FirebaseCalls() {
+        //passcode = passcodeGen();
+        roomid = passcode;
 
-        roomRef = roomRef.child(roomid);
+        //Room references for the different database containers
+        DatabaseReference roomRef = partyRef.child("" + roomid);
+        DatabaseReference songsRef = database.getReference("songlists");
+        DatabaseReference djRef = database.getReference("djlists");
 
-        ValueEventListener playListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                playSongs = dataSnapshot.getValue(String.class);
+        //Set up the three song lists
+        history_id = songsRef.push().getKey();
+        songsRef.child(history_id).child("songs").setValue("null");
+        songsRef.child(history_id).child("party_id").setValue(roomid);
+        songsRef.child(history_id).child("list_type").setValue("history");
 
-                System.err.println(playSongs);
-            }
+        request_list_id = songsRef.push().getKey();
+        songsRef.child(request_list_id).child("songs").setValue("null");
+        songsRef.child(request_list_id).child("party_id").setValue(roomid);
+        songsRef.child(request_list_id).child("list_type").setValue("request");
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        playlist_id = songsRef.push().getKey();
+        songsRef.child(playlist_id).child("songs").setValue("null");
+        songsRef.child(playlist_id).child("party_id").setValue(roomid);
+        songsRef.child(playlist_id).child("list_type").setValue("playlist");
 
-            }
-        };
-        roomRef.child(play).child("songs").addValueEventListener(playListener);
+        //Set up dj list
+        dj_list_id = djRef.push().getKey();
+        djRef.child(dj_list_id).child("users").child("dj").setValue(spotifyAuth);
+        djRef.child(dj_list_id).child("party_id").setValue(roomid);
+        djRef.child(dj_list_id).child("list_type").setValue("dj");
 
-        ValueEventListener requestListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                requestSongs = dataSnapshot.getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        roomRef.child(request).child("songs").addValueEventListener(requestListener);
-
-        ValueEventListener histListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                histSongs = dataSnapshot.getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        roomRef.child(hist).child("songs").addValueEventListener(histListener);
+        //Set up party members
+        roomRef.child("history_id").setValue(history_id);
+        roomRef.child("request_list_id").setValue(request_list_id);
+        roomRef.child("playlist_id").setValue(playlist_id);
+        roomRef.child("dj_list_id").setValue(dj_list_id);
+        roomRef.child("passcode").setValue(this.passcode);
+        roomRef.child("requests_paused").setValue(requests_paused);
     }
 
-    public ArrayList<String> fetchSongList(String origin) {
-        String songs = fetchSong(origin);
-        String song = "";
-        ArrayList<String> songsArr = new ArrayList<>();
+    /**
+     * Generates a random unique 4-digit integer passcode for the room.
+     * @return Random unique 4-digit integer passcode.
+     */
+    private int passcodeGen() {
+        final int[] pass = new int[1];
 
-        while (!songs.equals("")) {
-            if (songs.charAt(0) == '/') {
-                songs = songs.substring(1);
-                songsArr.add(song);
-                song = "";
-            }
+        String passcode = "";
 
-            song = song + songs.charAt(0);
-            songs = songs.substring(1);
+        for (int i = 0; i < passcodeLength; i++) {
+            int randint = (int) (Math.random() * 9);
+            passcode += randint;
         }
 
-        return songsArr;
-    }
+        pass[0] = Integer.parseInt(passcode);
 
-    //Plays the song, returns the song to be played or "" if the playlist is empty
-    public String playSong() {
-        String song = pop(play);
-
-        if (song.equals("")) {
-            return song;
-        }
-
-        push(hist, song);
-
-        return song;
-    }
-
-    //Add asong to the end of the request list
-    public boolean addRequest(String song) {
-        return push(request, song);
-    }
-
-    //Approves a song request and pushes it onto the playlist
-    public boolean approveRequest() {
-        String song = pop(request);
-
-        return !song.equals("") && push(play, song);
-
-    }
-
-    //Rejects a song request by removing it from the request list
-    public boolean rejectRequest() {
-        pop(request);
-
-        return true;
-    }
-
-    //Removes and returns the first song in the song string. Returns "" if empty
-    //origin: which list "requests, play, history"
-    private String pop(String origin) {
-        String songs = fetchSong(origin);
-        String song = "";
-
-        while (songs.length() >= 0) {
-            if (songs.charAt(0) == '/') {
-                songs = songs.substring(1);
-                roomRef.child(origin).child("songs").setValue(songs);
-                break;
+        partyRef.child(passcode).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    pass[0] = passcodeGen();
+                }
             }
 
-            song = song + songs.charAt(0);
-            songs = songs.substring(1);
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
 
-        return song;
+        return pass[0];
     }
+}
 
-    //Pushes a song to the end of the song string
-    private boolean push(String dest, String song) {
-        String songs = fetchSong(dest);
+/**
+ * A Song in a song list.
+ */
+class Song {
+    private String song_name; //Name of the song
+    private String song_id; //Spotify id of the song
+    private String requester; //Person who requested the song
 
-        songs = songs + song + '/';
-
-        roomRef.child(dest).child("songs").setValue(songs);
-
-        return true;
-    }
-
-    //Removes a song from a position in the song string
-    private boolean remove(String origin, int pos) {
-        //TODO: implement this after mvp
-
-        return true;
-    }
-
-    private String fetchSong(String origin) {
-        if (origin.equals(request)) {
-            return requestSongs;
-        }
-        else if (origin.equals(play)){
-            return playSongs;
-        }
-        else if (origin.equals(hist)) {
-            return histSongs;
-        }
-
-        return "";
+    /**
+     * Constructor which just assigns the song attributes.
+     * @param song_name Name of the song
+     * @param song_id Spotify id of the song
+     * @param requester Person who requested the song
+     */
+    public Song(String song_name, String song_id, String requester) {
+        this.song_name = song_name;
+        this.song_id = song_id;
+        this.requester = requester;
     }
 }

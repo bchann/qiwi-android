@@ -48,4 +48,29 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/playlist" />
 
+    <Button
+        android:text="firebase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playlist"
+        android:layout_toRightOf="@+id/requestsBtn"
+        android:layout_toEndOf="@+id/requestsBtn"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="52dp"
+        android:id="@+id/button2"
+        android:onClick="fbcall" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="55dp"
+        android:layout_marginStart="55dp"
+        android:id="@+id/button3"
+        android:onClick="mess"/>
+
 </RelativeLayout>
