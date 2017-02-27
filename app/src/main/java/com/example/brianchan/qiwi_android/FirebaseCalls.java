@@ -119,3 +119,16 @@ class Song {
         this.requester = requester;
     }
 }
+
+/**
+ * A User in a user list.
+ */
+class User {
+    private String spotify_key;
+    private String username;
+
+    public User(String spotify_key, String username) {
+        this.spotify_key = spotify_key;
+        this.username = username;
+    }
+}
