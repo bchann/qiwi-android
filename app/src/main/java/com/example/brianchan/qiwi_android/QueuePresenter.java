@@ -22,7 +22,7 @@ public class QueuePresenter {
     QueueActivity activity;
     MainActivity main;
     private String roomid = "room1";
-    //private FirebaseCalls queueCalls = new FirebaseCalls(roomid);
+    //private Party queueCalls = new Party(roomid);
     private boolean isPaused = false;
     Player.OperationCallback op = new Player.OperationCallback() {
         @Override

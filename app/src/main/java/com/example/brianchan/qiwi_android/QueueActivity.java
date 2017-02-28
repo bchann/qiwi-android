@@ -5,18 +5,9 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class QueueActivity extends AppCompatActivity {
     QueuePresenter presenter;
@@ -59,7 +50,7 @@ public class QueueActivity extends AppCompatActivity {
     }
 
     public void fbcall (View v) {
-        FirebaseCalls fb = new FirebaseCalls();
+        Party fb = new Party();
     }
 
     public void mess (View v) {
